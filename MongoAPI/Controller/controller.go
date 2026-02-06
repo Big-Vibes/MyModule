@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	model "github.com/Big-vibes/mongoapi/Model"
 	"github.com/gorilla/mux"
@@ -16,7 +17,6 @@ import (
 	// "go.mongodb.org/mongo-driver/x/mongo/driver/mongocrypt/options"
 )
 
-const connectionStrings = "mongodb+srv://abioduninaolaji:Oluwaviper12@cluster0.mykdhpg.mongodb.net/?appName=Cluster0"
 const dbname = "netflix"
 const colname = "watchlist"
 
@@ -24,11 +24,16 @@ const colname = "watchlist"
 var collection *mongo.Collection
 
 // connect with mongoDB
+var connectionString string
 
 func init() {
-	//client options
-	clientOption := options.Client().ApplyURI(connectionStrings)
 
+	connectionString = os.Getenv("MONGODB_URI")
+	if connectionString == "" {
+		log.Fatal("MONGODB_URI env variable not set")
+	}
+
+	clientOption := options.Client().ApplyURI(connectionString)
 	// connect to mongoDB
 	client, err := mongo.Connect(context.TODO(), clientOption)
 
